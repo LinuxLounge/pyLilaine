@@ -46,7 +46,8 @@ class IRC(object):
                     while (not qout.empty() and i < self.max_msg_per_loop):
                         self.put(qout.get())
                         i += 1
-            
+        print "Shutting down IRCD"
+        self.handle.close()
             # MOVE RELOAD TO PLUGINSYSTEM ITSELF
 #              if tok[1] == "PRIVMSG" and tok[3] == ":reload":
 #                    irc.put("PRIVMSG #lilaine :Reloading...")

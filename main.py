@@ -9,21 +9,18 @@ plugins = PluginSystem("plugins/")
 irc.connect("localhost", 6667, "pyLilaine", "lilaine", "pyLilaine Two Point Oh!", None)
 
 plugind = Thread(target=plugins.run)
-#plugind.daemon = True
 plugind.start()
 
 irc.addPluginSystem(plugins.qin, plugins.qout)
 
 ircd = Thread(target=irc.run)
-#ircd.daemon = True
 ircd.start()
 
 while 1:
     try:
-        ircd.join(5)
-        plugind.join(5)
-    except:
-        ircd.kill_received = True
-        plugind.kill_received = True
-
-
+        ircd.join(2)
+        plugind.join(2)
+    except KeyboardInterrupt:
+        irc.kill_received = True
+        plugins.kill_received = True
+        break

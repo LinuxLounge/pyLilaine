@@ -28,8 +28,12 @@ class PluginSystem(object):
 
     def run(self):
         while not self.kill_received:
-            msg = Message(self.qin.get())
-            self._process(msg)
+            try:
+                msg = Message(self.qin.get(timeout=2))
+                self._process(msg)
+            except Queue.Empty:
+                pass
+        print "Shutting down PluginSystem"
 
     def _process(self, msg): 
         msgType = msg.getType()
