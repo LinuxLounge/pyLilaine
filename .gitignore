@@ -1,1 +1,5 @@
-*.pyc
+*.pyc # bytecode
+*.py~ # vim backup file
+
+# allow custom plugin as a place for testing
+plugins/custom.py
