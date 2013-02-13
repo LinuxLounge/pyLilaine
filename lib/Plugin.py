@@ -9,6 +9,9 @@ class Plugin(object):
     def loaded(self):
         pass
 	    
+    def update(self, diff): # diff = time in ms since last call
+        pass
+        
     def onRaw(self, msg):
         pass
         

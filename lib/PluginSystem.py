@@ -1,7 +1,6 @@
 from Message import Message
 import string, sys, os.path, imp, Queue
 
-
 class PluginSystem(object):
     def __init__(self, path):
     	self.kill_received = False
@@ -34,6 +33,10 @@ class PluginSystem(object):
             except Queue.Empty:
                 pass
         print "Shutting down PluginSystem"
+
+    def update(self, diff):
+        for p in self.plugins:
+            p.update(diff)
 
     def _process(self, msg): 
         msgType = msg.getType()
