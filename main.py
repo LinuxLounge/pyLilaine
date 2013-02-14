@@ -34,7 +34,7 @@ last_ms = datetime.datetime.now()
 
 while 1:
     try:
-	time.sleep(1000)
+        time.sleep(1000)
     except KeyboardInterrupt:
         irc.kill_received = True
         plugins.kill_received = True
