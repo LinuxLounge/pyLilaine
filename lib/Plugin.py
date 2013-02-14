@@ -32,6 +32,9 @@ class Plugin(object):
         
     def onTopic(self, user, channel, message):
         pass
+
+    def onNick(self, nick, newnick):
+        pass
         
     def onMode(self, user, channel, mode):
         pass

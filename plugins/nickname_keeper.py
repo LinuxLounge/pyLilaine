@@ -14,7 +14,7 @@ class P(Plugin):
         # print "[nickname_keeper] debug - raw_event=%d - msg=%s" % (msg.type, msg.message)
         if (msg.getType() == 433):
             # 433: nickname :Nickname is already in use.
-            tok = msg.tokenize()
+            tok = msg.getMessage().split()
             if (tok[1] == self.nickname):
                 self.send("NICK %s" % self.secondary_nickname)
                 self.send("WATCH +%s" % self.nickname)
