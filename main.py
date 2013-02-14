@@ -1,7 +1,17 @@
 from lib.IRC import IRC
 from lib.PluginSystem import PluginSystem
 from threading import Thread
-import string, time, datetime
+import string, time, datetime, signal
+
+
+global plugins, last_ms
+
+def update(SIG, FRM):
+    global plugins, last_ms
+    this_ms = datetime.datetime.now()
+    diff = (this_ms - last_ms).microseconds
+    last_ms = this_ms
+    plugins.update(diff/1000) #to ms
 
 irc = IRC(False) # with_tls?
 plugins = PluginSystem("plugins/")
@@ -16,17 +26,15 @@ irc.addPluginSystem(plugins.qin, plugins.qout)
 ircd = Thread(target=irc.run)
 ircd.start()
 
+#registerin handler for SIGALRM
+signal.signal(signal.SIGALRM, update)
+#Set Intervall Timer to 0.4 seconds
+signal.setitimer(signal.ITIMER_REAL, 0.4, 0.4)
 last_ms = datetime.datetime.now()
+
 while 1:
-    this_ms = datetime.datetime.now()
-    diff = (this_ms - last_ms).microseconds
-    last_ms = this_ms
-
-    plugins.update(diff / 1000) # to ms
-
-    try: # joining a thread delays the main thread, so their timeouts added equals the update diff
-        ircd.join(0.2)
-        plugind.join(0.2)
+    try:
+	time.sleep(1000)
     except KeyboardInterrupt:
         irc.kill_received = True
         plugins.kill_received = True
