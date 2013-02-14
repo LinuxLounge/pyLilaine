@@ -28,6 +28,6 @@ while 1:
         ircd.join(0.2)
         plugind.join(0.2)
     except KeyboardInterrupt:
-        irc.kill_received = True
-        plugins.kill_received = True
+        irc.kill()
+        plugins.kill()
         break

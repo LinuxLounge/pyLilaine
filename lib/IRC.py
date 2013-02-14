@@ -48,11 +48,10 @@ class IRC(object):
                         i += 1
         print "Shutting down IRCD"
         self.handle.close()
-            # MOVE RELOAD TO PLUGINSYSTEM ITSELF
-#              if tok[1] == "PRIVMSG" and tok[3] == ":reload":
-#                    irc.put("PRIVMSG #lilaine :Reloading...")
-#                    plugins.reload()
-#                    irc.put("PRIVMSG #lilaine :Done!")
+
+    def kill(self):
+        self.put("QUIT :SIGINT received")
+        self.kill_received = True
 
     def connect(self, host, port, nickname, ident, realname, password = None):
         self.handle.connect((host, port))

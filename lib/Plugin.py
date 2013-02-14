@@ -18,8 +18,26 @@ class Plugin(object):
     def onMsg(self, msg):
         pass
         
+    def onCTCP(self, msg): # ctcp is actually a subtype of privmsg
+        pass
+        
     def onNotice(self, msg):
         pass
         
-    def onCTCP(self, msg):
+    def onJoin(self, user, channel):
+        pass
+        
+    def onPart(self, user, channel, message):
+        pass
+        
+    def onTopic(self, user, channel, message):
+        pass
+        
+    def onMode(self, user, channel, mode):
+        pass
+        
+    def onUserMode(self, nick, target, mode): # user mode events do not send ident/host
+        pass
+        
+    def onKick(self, user, channel, victim, reason):
         pass

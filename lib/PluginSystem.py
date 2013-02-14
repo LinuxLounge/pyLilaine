@@ -33,6 +33,9 @@ class PluginSystem(object):
             except Queue.Empty:
                 pass
         print "Shutting down PluginSystem"
+        
+    def kill(self):
+        self.kill_received = True
 
     def update(self, diff):
         for p in self.plugins:
@@ -43,10 +46,13 @@ class PluginSystem(object):
 
         if isinstance(msgType, int):
             # Numerical RAW
+            # :irc.host.org 000 nickname :message
             for p in self.plugins:
                 p.onRaw(msg)
         elif msgType == "PRIVMSG":
             # PRIVMSG
+            # :nick!user@host PRIVMSG target :message
+            # target = #chan | nick
             for p in self.plugins:
                 p.onMsg(msg)
         elif msgType == "CTCP":
@@ -55,11 +61,49 @@ class PluginSystem(object):
                 p.onCTCP(msg)
         elif msgType == "NOTICE":
             # NOTICE
+            # :nick!user@host NOTICE target :message
+            # target = #chan | nick
             for p in self.plugins:
                 p.onNotice(msg)
-#        elif tok[1] == "JOIN":
-#            for p in self.plugins:
-#                p.onUserJoinedChannel(irc.getIdentitiy(tok[0]), tok[2][1:]) # Identity, Channel
-#        elif tok[1] == "PART":
-#            for p in self.plugins:
-#                p.onUserLeftChannel(irc.getIdentitiy(tok[0]), tok[2]) # Identity, Channel
+        elif msgType == "JOIN":
+            # JOIN
+            # :nick!user@host JOIN :#chan
+            #  ------1-------       --2--
+            for p in self.plugins:
+                p.onJoin(msg.getUser(), msg.getTarget())
+        elif msgType == "PART":
+            # PART
+            # :nick!user@host PART #chan :message
+            #  ------1-------      --2--  ---3---
+            for p in self.plugins:
+                p.onPart(msg.getUser(), msg.getTarget(), msg.getMessage())
+        elif msgType == "TOPIC":
+            # TOPIC
+            # :nick!user@host TOPIC #chan :message
+            #                       --1--  ---2---
+            for p in self.plugins:
+                p.onTopic(msg.getUser(), msg.getTarget(), msg.getMessage())
+        elif msgType == "NICK":
+            # NICK
+            # :nick!user@host NICK :newnick
+            #  ------1-------       ---2---
+            for p in self.plugins:
+                p.onNick(msg.getUser(), msg.getMessage())
+        elif msgType == "MODE":
+            # MODE
+            # :nick!user@host MODE #chan :+nt
+            #  ------1-------      --2--  -3-
+            for p in self.plugins:
+                p.onMode(msg.getUser(), msg.getTarget(), msg.getMode())
+        elif msgType == "USERMODE":
+            # MODE
+            # :nick MODE nick :+iwxz
+            #  --1-      --2-  --3--
+            for p in self.plugins:
+                p.onUserMode(msg.getNick(), msg.getTarget(), msg.getMode())
+        elif msgType == "KICK":
+            # KICK
+            # :nick!user@host KICK #chan nick :reason
+            #  ------1-------      --2-- --3-  ---4--
+            for p in self.plugins:
+                p.onKick(msg.getUser(), msg.getTarget(), msg.getVictim(), msg.getMessage())
