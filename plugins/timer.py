@@ -18,7 +18,7 @@ class P(Plugin):
                 self.send("NOTICE %s :Timer expired!" % event.getBlob())
         
     def onMsg(self, msg):
-        tok = msg.message.split()
+        tok = msg.tokenize()
         
         if (tok[0] == "!timer"):
             if (len(tok) < 2):
@@ -28,4 +28,4 @@ class P(Plugin):
                     self.send("NOTICE %s :TypeError: Delay needs to be a decimal value!" % msg.nick)
                 else:
                     self.events.register("reminder", int(tok[1]) * 1000 * 60, msg.nick)
-                    self.send("NOTICE %s :Timer set for %s minutes." % (msg.nick, tok[1]))
+                    self.send("NOTICE %s :Timer set for %s minutes." % (msg.getUser()[0], tok[1]))
