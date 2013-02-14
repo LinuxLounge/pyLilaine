@@ -3,7 +3,6 @@ from lib.PluginSystem import PluginSystem
 from threading import Thread
 import string, time, datetime, signal
 
-
 global plugins, last_ms
 
 def update(SIG, FRM):
@@ -26,9 +25,9 @@ irc.addPluginSystem(plugins.qin, plugins.qout)
 ircd = Thread(target=irc.run)
 ircd.start()
 
-#registerin handler for SIGALRM
+# register handler for SIGALRM
 signal.signal(signal.SIGALRM, update)
-#Set Intervall Timer to 0.4 seconds
+# set interval to 400 ms
 signal.setitimer(signal.ITIMER_REAL, 0.4, 0.4)
 last_ms = datetime.datetime.now()
 

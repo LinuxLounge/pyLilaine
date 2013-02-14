@@ -20,9 +20,12 @@ class Message(object):
         # PRIVMSG
         if (self.__type__ == "PRIVMSG"):
             # CTCP (is actually a PRIVMSG, but we treat it as type=CTCP)
-            if (ord(self.__message__[0]) == 1 and ord(self.__message__[-1]) == 1):
-                self.__type_ = "CTCP"
-                self.__message__ = self.__message__.split(chr(1))[1]
+            try:
+                if (ord(self.__message__[0]) == 1 and ord(self.__message__[-1]) == 1):
+                    self.__type_ = "CTCP"
+                    self.__message__ = self.__message__.split(chr(1))[1]
+            except IndexError:
+                pass
                 
         # NOTICE NICK TOPIC PART
         # are already handled above, at this time no further optimization necessary

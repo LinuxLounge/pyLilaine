@@ -18,14 +18,14 @@ class P(Plugin):
                 self.send("NOTICE %s :Timer expired!" % event.getBlob())
         
     def onMsg(self, msg):
-        tok = msg.tokenize()
+        tok = msg.getMessage().split()
         
         if (tok[0] == "!timer"):
             if (len(tok) < 2):
-                self.send("NOTICE %s :Syntax: !timer <delay>" % msg.nick)
+                self.send("NOTICE %s :Syntax: !timer <delay>" % msg.getUser()[0])
             else:
                 if (not tok[1].isdigit()):
-                    self.send("NOTICE %s :TypeError: Delay needs to be a decimal value!" % msg.nick)
+                    self.send("NOTICE %s :TypeError: Delay needs to be a decimal value!" % msg.getUser()[0])
                 else:
-                    self.events.register("reminder", int(tok[1]) * 1000 * 60, msg.nick)
+                    self.events.register("reminder", int(tok[1]) * 1000 * 60, msg.getUser()[0])
                     self.send("NOTICE %s :Timer set for %s minutes." % (msg.getUser()[0], tok[1]))
