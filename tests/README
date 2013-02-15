@@ -1,0 +1,8 @@
+To add automatic unit testing before you commit add the run_tests script
+as a pre-commit hook for git.
+
+In the project root directory do:
+
+$ cd .hg/hooks && ln -s ../../run_tests.py pre-commit
+
+
