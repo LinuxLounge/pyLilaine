@@ -16,9 +16,13 @@ class Message(object):
         self.__target__ = self.__tok__[2]
         
         # message
-        self.__message__ = " ".join(self.__tok__[3:])[1:] # strip leading colon        
+        # Numerical RAW
+        if self.__type__.isdigit():
+            self.__message__ = raw_message # too many different formats, leave parsing to plugins
+            self.__type__ = int(self.__type__)
         # PRIVMSG
-        if (self.__type__ == "PRIVMSG"):
+        elif (self.__type__ == "PRIVMSG"):
+            self.__message__ = self.__raw__.split(":", 2)[2]
             # CTCP (is actually a PRIVMSG, but we treat it as type=CTCP)
             try:
                 if (ord(self.__message__[0]) == 1 and ord(self.__message__[-1]) == 1):
@@ -26,11 +30,11 @@ class Message(object):
                     self.__message__ = self.__message__.split(chr(1))[1]
             except IndexError:
                 pass
-                
+                 
         # NOTICE NICK TOPIC PART
         # are already handled above, at this time no further optimization necessary
-        elif (self.__type__ == "NOTICE") or (self.__type__ == "NICK") or (self.__type__ == "TOPIC") or (self.__type__ == "PART"):
-            pass
+        elif (self.__type__ == "NOTICE") or (self.__type__ == "NICK") or (self.__type__ == "TOPIC") or (self.__type__ == "PART") or (self.__type__ == "QUIT"):
+           self.__message__ = self.__raw__.split(":", 2)[2]
         
         # JOIN
         # message contains channel name
@@ -43,20 +47,16 @@ class Message(object):
             if (not self.__tok__[2].startswith("#")):
                 self.__type__ = "USERMODE"
                 self.__nick__ = self.__tok__[0][1:] # for a usermode change we only receive the nickname, no ident or host
-                self.__mode__ = self.__message__
+                self.__mode__ = self.__raw__.split(":", 2)[2]
             else:
-                self.__mode__ = " ".join(self.__tok__[3:]) # channels modes are prefixed with a colon while usermodes aren't
+                self.__mode__ = " ".join(self.__tok__[3:]) # channel modes are not prefixed by a colon
         
         # KICK
         # has two targets, channel and nick
         elif (self.__type__ == "KICK"):
             self.__victim__ = self.__tok__[3]
             self.__message__ = " ".join(self.__tok__[4:])[1:]
-        
-        # Numerical RAW
-        elif self.__type__.isdigit():
-            self.__message__ = " ".join(self.__tok__[2:])
-            self.__type__ = int(self.__type__)
+       
         else:
             # we might remove this later, but for now we need to test if everything is handled properly
             print "[warning] Message objected with unhandled type '%s' created." % self.__type__
