@@ -13,7 +13,8 @@ def update(SIG, FRM):
     plugins.update(diff/1000) #to ms
 
 irc = IRC(False) # with_tls?
-plugins = PluginSystem("plugins/")
+plugins = PluginSystem()
+plugins.loadDirectory("plugins/")
 
 irc.connect("localhost", 6667, "pyLilaine", "lilaine", "pyLilaine Two Point Oh!", None)
 
