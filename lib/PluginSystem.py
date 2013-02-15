@@ -77,6 +77,12 @@ class PluginSystem(object):
             #  ------1-------      --2--  ---3---
             for p in self.plugins:
                 p.onPart(msg.getUser(), msg.getTarget(), msg.getMessage())
+        elif msgType == "QUIT":
+            # PART
+            # :nick!user@host QUIT :message
+            #  ------1-------      --2--  ---3---
+            for p in self.__plugins__:
+                p.onQuit(msg.getUser(), msg.getMessage())
         elif msgType == "TOPIC":
             # TOPIC
             # :nick!user@host TOPIC #chan :message

@@ -30,6 +30,9 @@ class Plugin(object):
     def onPart(self, user, channel, message):
         pass
         
+    def onQuit(self, user, message):
+        pass
+        
     def onTopic(self, user, channel, message):
         pass
 
