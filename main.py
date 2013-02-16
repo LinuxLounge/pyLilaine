@@ -38,12 +38,7 @@ irc = IRC(ssl) # with_tls?
 irc.connect(host, port, nick, ident, description, password)
 
 plugins = PluginSystem()
-
-dirs = config.options("plugins")
-
-for dir in dirs:
-    plugins.loadDirectory(config.get("plugins",dir))
-
+plugins.loadDirectory(config.get("bot", "plugins"))
 
 plugind = Thread(target=plugins.run)
 plugind.start()

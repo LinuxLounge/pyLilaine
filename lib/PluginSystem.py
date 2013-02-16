@@ -17,7 +17,9 @@ class PluginSystem(object):
         self.__path__ = path
         
         plugin_files = [x[:-3] for x in os.listdir(self.__path__) if x.endswith(".py") and not x.startswith("__init__")]
-        sys.path.insert(0, self.__path__)
+    
+        if (self.__path__ not in sys.path):
+            sys.path.insert(0, self.__path__)
         
         for plugin in plugin_files:
             self.loadPlugin(plugin)
