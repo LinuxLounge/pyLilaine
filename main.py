@@ -1,7 +1,7 @@
 from lib.IRC import IRC
 from lib.PluginSystem import PluginSystem
 from threading import Thread
-import string, time, datetime, signal
+import string, time, datetime, signal, ConfigParser
 
 global plugins, last_ms
 
@@ -12,11 +12,38 @@ def update(SIG, FRM):
     last_ms = this_ms
     plugins.update(diff/1000) #to ms
 
-irc = IRC(False) # with_tls?
-plugins = PluginSystem()
-plugins.loadDirectory("plugins/")
 
-irc.connect("localhost", 6667, "pyLilaine", "lilaine", "pyLilaine Two Point Oh!", None)
+
+config = ConfigParser.RawConfigParser()
+config.read('pylilaine.conf')
+
+
+host = config.get("server","host")
+port = config.getint("server","port")
+ssl  = config.getboolean("server","ssl")
+
+password = None
+
+if (config.has_option("server", "password")):
+    password = config.get("server","password")
+        
+    
+nick = config.get("bot","nick")
+ident = config.get("bot","ident")
+realname = config.get("bot","realname")
+description = config.get("bot", "description")
+    
+
+irc = IRC(ssl) # with_tls?
+irc.connect(host, port, nick, ident, description, password)
+
+plugins = PluginSystem()
+
+dirs = config.options("plugins")
+
+for dir in dirs:
+    plugins.loadDirectory(config.get("plugins",dir))
+
 
 plugind = Thread(target=plugins.run)
 plugind.start()
