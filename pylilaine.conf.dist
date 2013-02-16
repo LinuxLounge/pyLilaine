@@ -3,15 +3,12 @@ nick = Lilaine
 ident = lilaine
 realname = pyLilaine
 description = pyLilaine Two Point Oh!
+
+plugins = plugins/
     
 [server]
 host = localhost
 port = 6667
 ssl = off
 #password = secret
-
-[plugins]
-dir=plugins/
-#dir2=myplugins/
-#testing=testing/
 
