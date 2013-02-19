@@ -41,3 +41,6 @@ class EventHandler(object):
         
     def register(self, name, delay, blob = None):
         self.__events.append(Event(name, delay, blob))
+       
+    def cancel(self, name):
+        self.__events = [event for event in self.__events if event.getName() != name]

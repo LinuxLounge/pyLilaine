@@ -8,9 +8,10 @@ global plugins, last_ms
 def update(SIG, FRM):
     global plugins, last_ms
     this_ms = datetime.datetime.now()
-    diff = (this_ms - last_ms).microseconds
+    diff = (this_ms - last_ms).microseconds / 1000
     last_ms = this_ms
-    plugins.update(diff/1000) #to ms
+    plugins.update(diff)
+    irc.update(diff)
 
 
 
