@@ -146,3 +146,4 @@ class IRC(object):
             if (not self.connecting):
                 self.reconnect()
         
+            return ""
