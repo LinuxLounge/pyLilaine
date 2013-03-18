@@ -11,6 +11,7 @@ class PluginSystem(object):
     # Plugin Loading/Unloading
     def clear(self):
         self.__plugins__ = [] # feed the gc!
+        self.__commands__ = {}
 
     def loadDirectory(self, path):
         self.clear()
@@ -27,7 +28,10 @@ class PluginSystem(object):
     def loadPlugin(self, plugin):
         p = __import__(plugin)
         imp.reload(p) # triggers recompile
-        self.__plugins__.append(p.P(self.qout)) # remember instance and hand oover send queue
+        i = p.P(self.qout)
+        self.__plugins__.append(i) # remember instance and hand oover send queue
+        if (hasattr(i, "command")):
+            self.__commands__[i.command] = i.onCommand
         
     def loadPluginTesting(self, plugin_instance): # this is an interface for unit testing only
         self.__plugins__.append(plugin_instance)
@@ -67,6 +71,11 @@ class PluginSystem(object):
             # target = #chan | nick
             for p in self.__plugins__:
                 p.onMsg(msg)
+
+            command = msg.getMessage().split()[0]
+            if (command[:1] == '!' and command[1:] in self.__commands__):
+                self.__commands__[command[1:]](msg.getTarget(), msg)
+                
         elif msgType == "CTCP":
             # CTCP
             for p in self.__plugins__:

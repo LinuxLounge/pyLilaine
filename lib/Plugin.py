@@ -47,3 +47,6 @@ class Plugin(object):
         
     def onKick(self, user, channel, victim, reason):
         pass
+
+    def onCommand(self, target, msg):
+        pass
