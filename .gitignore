@@ -1,5 +1,7 @@
 *.pyc # bytecode
 *.py~ # vim backup file
+*.conf #config files
+*.db #sqlite3 databases
 
 # allow custom plugin as a place for testing
 plugins/custom.py
