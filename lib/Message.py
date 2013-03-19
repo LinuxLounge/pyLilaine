@@ -1,14 +1,16 @@
 class Message(object):
-    def __init__(self, raw_message):
+    def __init__(self, raw_message, authed):
         self.__raw__ = raw_message
         self.__tok__ = self.__raw__.split()
-        
+        self.__authed__ = False
         # type
         self.__type__ = self.__tok__[1]
 
         # server / user!ident@host
         if "@" in self.__tok__[0]:
             (self.__nick__, self.__ident__, self.__host__) = self.__parseHostmask__()
+            if (self.__nick__+self.__ident__+self.__host__ in authed):
+                self.__authed__ = True
         else:
             self.__server__ = self.__tok__[0][1:]
         
@@ -104,3 +106,6 @@ class Message(object):
             return self.__target__
         else:
             return self.__nick__
+
+    def isAuthed(self):
+        return self.__authed__

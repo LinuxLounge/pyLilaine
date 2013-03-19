@@ -4,6 +4,7 @@ ident = lilaine
 realname = pyLilaine
 description = pyLilaine Two Point Oh!
 
+adminpw = 123456
 plugins = plugins/
     
 [server]

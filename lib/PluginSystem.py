@@ -2,14 +2,16 @@ from Message import Message
 import string, sys, os.path, imp, Queue
 
 class PluginSystem(object):
-    def __init__(self):
+    def __init__(self, password = None):
     	self.kill_received = False
         self.qin = Queue.Queue() # recv queue
         self.qout = Queue.Queue() # send queue
+        self.__password__ = password
         self.clear()
         
     # Plugin Loading/Unloading
     def clear(self):
+        self.__authed__ = []
         self.__plugins__ = [] # feed the gc!
         self.__commands__ = {}
 
@@ -44,7 +46,7 @@ class PluginSystem(object):
     def run(self):
         while not self.kill_received:
             try:
-                msg = Message(self.qin.get(timeout=2))
+                msg = Message(self.qin.get(timeout=2), self.__authed__)
                 self.process(msg)
             except Queue.Empty:
                 pass
@@ -84,6 +86,13 @@ class PluginSystem(object):
             # NOTICE
             # :nick!user@host NOTICE target :message
             # target = #chan | nick
+            tok = msg.getMessage().split()
+            if tok[0] == "AUTH":
+                if (self.__password__ is not None and tok[1] == self.__password__):
+                    a, b, c = msg.getUser()
+                    self.__authed__.append(a+b+c)
+                    self.qout.put("NOTICE %s :You're now opped" % msg.getNick())
+            
             for p in self.__plugins__:
                 p.onNotice(msg)
         elif msgType == "JOIN":

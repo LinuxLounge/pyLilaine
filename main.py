@@ -38,7 +38,7 @@ description = config.get("bot", "description")
 irc = IRC(ssl) # with_tls?
 irc.connect(host, port, nick, ident, description, password)
 
-plugins = PluginSystem()
+plugins = PluginSystem(config.get("bot", "adminpw"))
 plugins.loadDirectory(config.get("bot", "plugins"))
 
 plugind = Thread(target=plugins.run)
