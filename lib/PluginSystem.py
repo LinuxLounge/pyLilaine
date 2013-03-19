@@ -91,7 +91,7 @@ class PluginSystem(object):
                 if (self.__password__ is not None and tok[1] == self.__password__):
                     a, b, c = msg.getUser()
                     self.__authed__.append(a+b+c)
-                    self.qout.put("NOTICE %s :You're now opped" % msg.getNick())
+                    self.qout.put("NOTICE %s :You're now authed" % msg.getNick())
             
             for p in self.__plugins__:
                 p.onNotice(msg)
