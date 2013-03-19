@@ -74,7 +74,7 @@ class PluginSystem(object):
 
             command = msg.getMessage().split()[0]
             if (command[:1] == '!' and command[1:] in self.__commands__):
-                self.__commands__[command[1:]](msg.getTarget(), msg)
+                self.__commands__[command[1:]](msg.getReplyTo(), msg)
                 
         elif msgType == "CTCP":
             # CTCP

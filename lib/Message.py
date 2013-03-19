@@ -99,3 +99,8 @@ class Message(object):
     def getMode(self):
         return self.__mode__
 
+    def getReplyTo(self):
+        if (self.__target__[0] == '#'):
+            return self.__target__
+        else:
+            return self.__nick__
