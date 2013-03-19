@@ -134,7 +134,7 @@ class IRC(object):
     def put(self, msg):
         try:
             print "-> %s" % msg
-            self.handle.send("%s\n\n" % msg)
+            self.handle.send("%s\n\n" % msg.encode('utf-8','ignore'))
         except socket.error:
             if (not self.connecting):
                 self.reconnect()
