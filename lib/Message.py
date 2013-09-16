@@ -1,5 +1,5 @@
 class Message(object):
-    def __init__(self, raw_message, authed):
+    def __init__(self, raw_message, authed = []):
         self.__raw__ = raw_message
         self.__tok__ = self.__raw__.split()
         self.__authed__ = False
