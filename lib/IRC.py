@@ -1,10 +1,10 @@
-import Queue, socket, ssl, select
+import queue, socket, ssl, select
 
-from EventHandler import EventHandler
+from .EventHandler import EventHandler
 
 class IRC(object):
     def __init__(self, with_tls):
-    	self.kill_received = False
+        self.kill_received = False
         self.lin =  []
         self.lout = []
         self.events = EventHandler()
@@ -31,15 +31,15 @@ class IRC(object):
         while (not self.kill_received):
             ready_to_read, ready_to_write, in_error = select.select([self.handle],[],[], 0.5)
             if len(ready_to_read) == 1:
-                buf = "%s%s" % (buf, self.get())
-                lines = buf.split("\n")
-                buf = lines.pop()
+                buf = "%s%s" % (buf, self.get()) # just append, as we don't know where the newlines are
+                lines = buf.split("\n")          # then make a list by splitting by newlines
+                buf = lines.pop()                # but remove the last element, which is incomplete
 
                 # loop over incoming lines
                 for line in lines:
-                    print "<- %s" % line
+                    print("<- %s" % line)
                     tok = line.split()
-                    
+
                     # PING request
                     if (tok[0] == "PING"):
                         self.put("PONG %s" % tok[1])
@@ -59,7 +59,7 @@ class IRC(object):
                     while (not qout.empty() and i < self.max_msg_per_loop):
                         self.put(qout.get())
                         i += 1
-        print "Shutting down IRCD"
+        print("Disconnecting...")
         self.handle.close()
         
     def update(self, diff):
@@ -103,11 +103,11 @@ class IRC(object):
         # connect socket
         self.connecting = True
         try:
-            print "Connecting to %s:%d..." % (host, port)
+            print("Connecting to %s:%d..." % (host, port))
             self.handle.connect((host, port))
         except socket.error as err:
-            print "Unable to connect: %s" % err
-            print "Retrying in %ss..." % self.reconnect_delay
+            print("Unable to connect: %s" % err)
+            print("Retrying in %ss..." % self.reconnect_delay)
             self.events.register("reconnect", self.reconnect_delay * 1000)
             return
         
@@ -133,15 +133,15 @@ class IRC(object):
             
     def put(self, msg):
         try:
-            print "-> %s" % msg
-            self.handle.send("%s\n\n" % msg.encode('utf-8','ignore'))
+            print("-> %s" % msg)
+            self.handle.send(bytes("%s\n\n" % msg, 'UTF-8'))
         except socket.error:
             if (not self.connecting):
                 self.reconnect()
         
     def get(self):
         try:
-            return self.handle.recv(1024)
+            return self.handle.recv(1024).decode('UTF-8')
         except socket.error:
             if (not self.connecting):
                 self.reconnect()

@@ -1,4 +1,4 @@
-import Queue
+import queue
 
 class Event(object):
     def __init__(self, name, timer, blob = None):
@@ -24,7 +24,7 @@ class Event(object):
 class EventHandler(object):
     def __init__(self):
         self.__events = []
-        self.__finished = Queue.Queue()
+        self.__finished = queue.Queue()
         
     def update(self, diff):
         for event in self.__events:
@@ -36,7 +36,7 @@ class EventHandler(object):
     def next(self):
         try:
             return self.__finished.get(False) # do not block here
-        except Queue.Empty:
+        except queue.Empty:
             return False
         
     def register(self, name, delay, blob = None):

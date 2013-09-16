@@ -1,7 +1,7 @@
 from lib.IRC import IRC
 from lib.PluginSystem import PluginSystem
 from threading import Thread
-import string, time, datetime, signal, ConfigParser
+import string, time, datetime, signal, configparser
 
 global plugins, last_ms
 
@@ -15,7 +15,7 @@ def update(SIG, FRM):
 
 
 
-config = ConfigParser.RawConfigParser()
+config = configparser.RawConfigParser()
 config.read('pylilaine.conf')
 
 

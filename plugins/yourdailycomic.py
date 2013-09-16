@@ -3,6 +3,13 @@ from lib.Plugin import Plugin
 from time import mktime
 import sqlite3, feedparser, dateutil.parser, datetime
 
+'''
+Dependencies:
+* python-feedparser
+* python-dateutil
+
+'''
+
 class P(Plugin):
     def loaded(self):
         self.command = "comic"
@@ -17,7 +24,7 @@ class P(Plugin):
         cursor.execute("CREATE TABLE IF NOT EXISTS yourdailycomic_channels (name TEXT)")
         conn.commit()
         conn.close()  
-        print "yourdailycomic module loaded"
+        print("yourdailycomic module loaded")
     
     def update(self, diff):
         self.events.update(diff)
@@ -32,7 +39,7 @@ class P(Plugin):
                 self.events.register("check", 30*1000*60, None)
     
     def checkforcomics(self):
-        print "Checking for comics"
+        print("Checking for comics")
         conn = sqlite3.connect("dailycomic.db");
         cursor = conn.cursor()
 
@@ -40,7 +47,7 @@ class P(Plugin):
 
 
         for row in cursor.execute("SELECT ROWID, name, url, latestentry FROM yourdailycomic_urls").fetchall():
-            print "Checking Comic %s" % (row[1])
+            print("Checking Comic %s" % (row[1]))
             feed = feedparser.parse(row[2])
             curr = dateutil.parser.parse(row[3], ignoretz=True)
             latest = curr
@@ -72,7 +79,7 @@ class P(Plugin):
             cursor.execute("UPDATE yourdailycomic_urls SET latestentry = ? WHERE ROWID = ? ", (latest.isoformat(), row[0]))
         conn.commit()
         conn.close()
-        print "Commic Check done"
+        print("Commic Check done")
 
     def todayComics(self, target):
         td = datetime.date.today().isoformat()

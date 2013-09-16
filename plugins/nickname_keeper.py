@@ -11,7 +11,7 @@ class P(Plugin):
     def loaded(self):
         self.events = EventHandler()
         self.working = False
-        print "nickname_keeper module loaded\n\tprimary=%s, secondary=%s" % (self.nickname, self.secondary_nickname)
+        print("nickname_keeper module loaded\n\tprimary=%s, secondary=%s" % (self.nickname, self.secondary_nickname))
         
     def onRaw(self, msg):
         # print "[nickname_keeper] debug - raw_event=%d - msg=%s" % (msg.getType(), msg.getMessage())
@@ -22,23 +22,23 @@ class P(Plugin):
                 self.send("NICK %s" % self.secondary_nickname)
                 self.send("WATCH +%s" % self.nickname)
                 self.working = True
-                print "[nickname_keeper] Nickname taken, putting it on the watchlist..."
+                print("[nickname_keeper] Nickname taken, putting it on the watchlist...")
             elif (tok[3] == self.secondary_nickname):
                 self.send("NICK %s%d" % (self.nickname, random.randrange(1,999)))
-                print "[nickname_keeper] Secondary nickname also taken, adding some random numbers."
+                print("[nickname_keeper] Secondary nickname also taken, adding some random numbers.")
         elif (msg.getType() == 601) or (msg.getType() == 605):
             # 601 THIS IS SOME WORKAROUND FOR UNREALIRCD MADNESS, WTF?!
             # 605: nick userid host time :is offline
             tok = msg.getMessage().split()
             if (tok[3] == self.nickname):
-                print "[nickname_keeper] Our nickname was given up, changing now and clearing watchlist!"
+                print("[nickname_keeper] Our nickname was given up, changing now and clearing watchlist!")
                 self.send("NICK %s" % self.nickname)
                 self.send("WATCH -%s" % self.nickname)
                 self.working = False
         elif (msg.getType() == 451):
             # 451: WATCH :You have not registered
             self.events.register("watch", 10000, self.nickname) # retry
-            print "[nickname_keeper] Tried to WATCH too early, retrying in 10s"
+            print("[nickname_keeper] Tried to WATCH too early, retrying in 10s")
             
     def update(self, diff):
         self.events.update(diff)

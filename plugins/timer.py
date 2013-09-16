@@ -4,7 +4,7 @@ from lib.Plugin import Plugin
 class P(Plugin):
     def loaded(self):
         self.events = EventHandler()
-        print "timer module loaded"
+        print("timer module loaded")
     
     def update(self, diff):
         self.events.update(diff)

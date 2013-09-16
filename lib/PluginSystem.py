@@ -1,11 +1,11 @@
-from Message import Message
-import string, sys, os.path, imp, Queue
+from .Message import Message
+import string, sys, os.path, imp, queue
 
 class PluginSystem(object):
     def __init__(self, password = None):
-    	self.kill_received = False
-        self.qin = Queue.Queue() # recv queue
-        self.qout = Queue.Queue() # send queue
+        self.kill_received = False
+        self.qin = queue.Queue() # recv queue
+        self.qout = queue.Queue() # send queue
         self.__password__ = password
         self.clear()
         
@@ -48,9 +48,9 @@ class PluginSystem(object):
             try:
                 msg = Message(self.qin.get(timeout=2), self.__authed__)
                 self.process(msg)
-            except Queue.Empty:
+            except queue.Empty:
                 pass
-        print "Shutting down PluginSystem"
+        print("Received Kill Signal. Shutting down plugin handling.")
         
     def kill(self):
         self.kill_received = True

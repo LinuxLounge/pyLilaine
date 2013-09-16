@@ -61,7 +61,7 @@ class Message(object):
        
         else:
             # we might remove this later, but for now we need to test if everything is handled properly
-            print "[warning] Message objected with unhandled type '%s' created." % self.__type__
+            print("[warning] Message objected with unhandled type '%s' created." % self.__type__)
 
     # private
     def __parseHostmask__(self):
