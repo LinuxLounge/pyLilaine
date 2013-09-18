@@ -20,8 +20,6 @@ class IRC(object):
         self.connected = False
         self.connecting = False
         self.clear_buffers = True
-        # init
-        self.create()
 
     def addPluginSystem(self, qin, qout):
         self.lin.append(qin)
@@ -84,18 +82,15 @@ class IRC(object):
     def kill(self):
         if (self.connected):
             self.put("QUIT :SIGINT")
+            self.handle.close()
         self.kill_received = True
 
     def killed(self):
         return self.kill_received
 
-    def create(self):
-        self.connected = False
-        self.handle = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        if (self.with_tls):
-            self.handle = ssl.wrap_socket(self.handle)
-
     def connect(self, host, port, nickname, ident, realname, password = None):
+        self.connected = False
+
         # remember for reconnect
         self.host = host
         self.port = port
@@ -104,11 +99,22 @@ class IRC(object):
         self.realname = realname
         self.password = password
         
-        # connect socket
+        # resolve address now
+        ai_list = socket.getaddrinfo(host, port)
+        (af, socktype, proto, cn, sockaddr) = ai_list[0] # lets just look at the first entry for now
+
+        # and create the socket
+        self.handle = socket.socket(af, socktype, proto)
+
+        # wrap this in tls if requested
+        if (self.with_tls):
+            self.handle = ssl.wrap_socket(self.handle)
+
+        # and connect
         self.connecting = True
         try:
-            print("Connecting to %s:%d..." % (host, port))
-            self.handle.connect((host, port))
+            print("Connecting to %s:%d..." % (sockaddr[0], sockaddr[1]))
+            self.handle.connect(sockaddr)
         except socket.error as err:
             print("Unable to connect: %s" % err)
             print("Retrying in %ss..." % self.reconnect_delay)
@@ -128,12 +134,12 @@ class IRC(object):
         
     def reconnect(self):
         '''
-        in case we get disconnected the socket is destroyed
-        and we have to create a new one
+        in case we get disconnected destroy the socket
+        and reconnect
         '''
+        self.handle.close()
         self.clear_buffers = True
         self.connecting = True
-        self.create()
         self.connect(self.host, self.port, self.nickname, self.ident, self.realname, self.password)
             
     def put(self, msg):
