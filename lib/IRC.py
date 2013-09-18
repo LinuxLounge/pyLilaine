@@ -19,6 +19,7 @@ class IRC(object):
         # state
         self.connected = False
         self.connecting = False
+        self.clear_buffers = True
         # init
         self.create()
 
@@ -27,10 +28,12 @@ class IRC(object):
         self.lout.append(qout)
            
     def run(self):
-        buf = ""
         while (not self.kill_received):
             ready_to_read, ready_to_write, in_error = select.select([self.handle],[],[], 0.5)
             if len(ready_to_read) == 1:
+                if (self.clear_buffers):         # clear remnants of gibberish from a broken connection and so on
+                    buf = ""
+                    self.clear_buffers = False
                 buf = "%s%s" % (buf, self.get()) # just append, as we don't know where the newlines are
                 lines = buf.split("\n")          # then make a list by splitting by newlines
                 buf = lines.pop()                # but remove the last element, which is incomplete
@@ -127,6 +130,7 @@ class IRC(object):
         in case we get disconnected the socket is destroyed
         and we have to create a new one
         '''
+        self.clear_buffers = True
         self.connecting = True
         self.create()
         self.connect(self.host, self.port, self.nickname, self.ident, self.realname, self.password)
