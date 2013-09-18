@@ -28,6 +28,7 @@ class IRC(object):
         self.lout.append(qout)
            
     def run(self):
+        buf = ""
         while (not self.kill_received):
             ready_to_read, ready_to_write, in_error = select.select([self.handle],[],[], 0.5)
             if len(ready_to_read) == 1:
