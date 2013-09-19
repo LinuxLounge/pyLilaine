@@ -5,7 +5,7 @@ from lib.PluginSystem import PluginSystem
 from lib.Plugin import Plugin
 from lib.Message import Message
 
-from plugins.test import TestPlugin
+from .plugins.test import TestPlugin
 
 class testPluginSystem(unittest.TestCase):
     """
