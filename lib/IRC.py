@@ -19,7 +19,6 @@ class IRC(object):
         # state
         self.connected = False
         self.connecting = False
-        self.clear_buffers = True
 
     def addPluginSystem(self, qin, qout):
         self.lin.append(qin)
@@ -30,12 +29,9 @@ class IRC(object):
         while (not self.kill_received):
             ready_to_read, ready_to_write, in_error = select.select([self.handle],[],[], 0.5)
             if len(ready_to_read) == 1:
-                if (self.clear_buffers):         # clear remnants of gibberish from a broken connection and so on
-                    buf = ""
-                    self.clear_buffers = False
-                buf = "%s%s" % (buf, self.get()) # just append, as we don't know where the newlines are
-                lines = buf.split("\n")          # then make a list by splitting by newlines
-                buf = lines.pop()                # but remove the last element, which is incomplete
+                buf += self.get()       # just append, as we don't know where the newlines are
+                lines = buf.split("\n") # then make a list, splitting by newlines
+                buf = lines.pop()       # but remove the last element, which is incomplete
 
                 # loop over incoming lines
                 for line in lines:
@@ -138,7 +134,6 @@ class IRC(object):
         and reconnect
         '''
         self.handle.close()
-        self.clear_buffers = True
         self.connecting = True
         self.connect(self.host, self.port, self.nickname, self.ident, self.realname, self.password)
             
@@ -156,5 +151,8 @@ class IRC(object):
         except socket.error:
             if (not self.connecting):
                 self.reconnect()
-        
             return ""
+        except UnicodeDecodeError:
+            print("Caught UnicodeDecodeError in IRC::get()")
+            return ""
+
